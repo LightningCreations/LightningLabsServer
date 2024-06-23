@@ -1,6 +1,4 @@
-#[macro_use]
-extern crate rocket;
-
+use dotenvy::dotenv;
 use rocket_okapi::{openapi_get_routes, swagger_ui::{make_swagger_ui, SwaggerUIConfig}};
 
 pub mod db;
@@ -9,12 +7,13 @@ pub mod routes;
 pub mod schema;
 
 async fn initialize() {
+    dotenv().ok();
     // nothing yet
 }
 
 fn get_docs() -> SwaggerUIConfig {
     SwaggerUIConfig {
-        url: "../openapi.json".to_owned(),
+        url: "../api/openapi.json".to_owned(),
         ..Default::default()
     }
 }
@@ -23,7 +22,7 @@ fn get_docs() -> SwaggerUIConfig {
 async fn main() -> Result<(), rocket::Error> {
     initialize().await;
 
-    let _rocket = rocket::build().mount("/", openapi_get_routes![
+    let _rocket = rocket::build().mount("/api", openapi_get_routes![
         routes::get_x,
         routes::get_xy,
         routes::get_xyz,

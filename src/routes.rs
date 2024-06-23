@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{db::establish_connection, models::Entity};
 use diesel_async::RunQueryDsl;
-use rocket::serde::json::Json;
+use rocket::{get, post, serde::json::Json};
 use rocket_okapi::openapi;
 use uuid::Uuid;
 
