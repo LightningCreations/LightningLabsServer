@@ -1,8 +1,6 @@
-#[macro_use]
-extern crate rocket;
-
 use std::net::Ipv4Addr;
 
+use dotenvy::dotenv;
 use rocket::Config;
 use rocket_okapi::{
     openapi_get_routes,
@@ -15,12 +13,13 @@ pub mod routes;
 pub mod schema;
 
 async fn initialize() {
+    dotenv().ok();
     // nothing yet
 }
 
 fn get_docs() -> SwaggerUIConfig {
     SwaggerUIConfig {
-        url: "../openapi.json".to_owned(),
+        url: "../api/openapi.json".to_owned(),
         ..Default::default()
     }
 }
@@ -35,7 +34,7 @@ async fn main() -> Result<(), rocket::Error> {
             ..Config::default()
         })
         .mount(
-            "/",
+            "/api",
             openapi_get_routes![
                 routes::get_x,
                 routes::get_xy,
