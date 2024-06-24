@@ -8,4 +8,4 @@ COPY ./ ./
 
 RUN cargo build --release
 
-CMD pwd && sleep 5 && diesel migration run && cargo run --release
+CMD diesel migration run && cargo run --release
