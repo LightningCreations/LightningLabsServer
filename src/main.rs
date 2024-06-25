@@ -1,5 +1,11 @@
+use std::net::Ipv4Addr;
+
 use dotenvy::dotenv;
-use rocket_okapi::{openapi_get_routes, swagger_ui::{make_swagger_ui, SwaggerUIConfig}};
+use rocket::Config;
+use rocket_okapi::{
+    openapi_get_routes,
+    swagger_ui::{make_swagger_ui, SwaggerUIConfig},
+};
 
 pub mod db;
 pub mod models;
@@ -22,13 +28,24 @@ fn get_docs() -> SwaggerUIConfig {
 async fn main() -> Result<(), rocket::Error> {
     initialize().await;
 
-    let _rocket = rocket::build().mount("/api", openapi_get_routes![
-        routes::get_x,
-        routes::get_xy,
-        routes::get_xyz,
-        routes::post_x,
-        routes::post_xyz,
-    ]).mount("/swagger-ui/", make_swagger_ui(&get_docs())).launch().await?;
+    let _rocket = rocket::build()
+        .configure(Config {
+            address: Ipv4Addr::new(0, 0, 0, 0).into(),
+            ..Config::default()
+        })
+        .mount(
+            "/api",
+            openapi_get_routes![
+                routes::get_x,
+                routes::get_xy,
+                routes::get_xyz,
+                routes::post_x,
+                routes::post_xyz,
+            ],
+        )
+        .mount("/swagger-ui/", make_swagger_ui(&get_docs()))
+        .launch()
+        .await?;
 
     Ok(())
 }
