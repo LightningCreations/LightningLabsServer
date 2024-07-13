@@ -1,11 +1,14 @@
 use std::net::Ipv4Addr;
 
 use dotenvy::dotenv;
-use rocket::Config;
+use rocket::{http::Method, Config};
+use rocket_cors::{AllowedOrigins, CorsOptions};
 use rocket_okapi::{
     openapi_get_routes,
     swagger_ui::{make_swagger_ui, SwaggerUIConfig},
 };
+// use rocket::http::Method;
+// use rocket_cors::{AllowedOrigins, CorsOptions};
 
 pub mod db;
 pub mod models;
@@ -28,6 +31,17 @@ fn get_docs() -> SwaggerUIConfig {
 async fn main() -> Result<(), rocket::Error> {
     initialize().await;
 
+
+    let cors = CorsOptions::default()
+    .allowed_origins(AllowedOrigins::all())
+    .allowed_methods(
+        vec![Method::Get, Method::Post, Method::Patch]
+            .into_iter()
+            .map(From::from)
+            .collect(),
+    )
+    .allow_credentials(true);
+
     let _rocket = rocket::build()
         .configure(Config {
             address: Ipv4Addr::new(0, 0, 0, 0).into(),
@@ -44,6 +58,7 @@ async fn main() -> Result<(), rocket::Error> {
             ],
         )
         .mount("/swagger-ui/", make_swagger_ui(&get_docs()))
+        .attach(cors.to_cors().unwrap())
         .launch()
         .await?;
 
