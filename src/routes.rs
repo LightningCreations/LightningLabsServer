@@ -10,14 +10,14 @@ use uuid::Uuid;
 
 #[openapi]
 #[get("/<collection>")]
-pub async fn get_x(collection: &str) -> Json<Vec<Uuid>> {
+pub async fn get_x(collection: &str) -> Json<Vec<Entity>> {
     let connection = &mut establish_connection().await;
 
     Json({
         use crate::schema::entities::dsl::*;
         entities
             .filter(ty.eq(collection))
-            .select(id)
+            .select(Entity::as_select())
             .load(connection)
             .await
             .expect("error loading entities")
@@ -43,7 +43,7 @@ pub async fn get_xy(collection: &str, item: Uuid) -> Json<Entity> {
 
 #[openapi]
 #[get("/<super_collection>/<parent>/<collection>")]
-pub async fn get_xyz(super_collection: &str, parent: Uuid, collection: &str) -> Json<Vec<Uuid>> {
+pub async fn get_xyz(super_collection: &str, parent: Uuid, collection: &str) -> Json<Vec<Entity>> {
     let _ = super_collection; // :) deal with it later
     let connection = &mut establish_connection().await;
 
@@ -52,7 +52,7 @@ pub async fn get_xyz(super_collection: &str, parent: Uuid, collection: &str) -> 
         entities
             .filter(ty.eq(collection))
             .filter(parent_id.eq(parent))
-            .select(id)
+            .select(Entity::as_select())
             .load(connection)
             .await
             .expect("error loading entities")

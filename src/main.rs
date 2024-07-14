@@ -31,7 +31,6 @@ fn get_docs() -> SwaggerUIConfig {
 async fn main() -> Result<(), rocket::Error> {
     initialize().await;
 
-
     let cors = CorsOptions::default()
     .allowed_origins(AllowedOrigins::all())
     .allowed_methods(
