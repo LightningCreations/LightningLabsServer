@@ -42,9 +42,9 @@ pub async fn get_xy(collection: &str, item: Uuid) -> Json<Entity> {
 }
 
 #[openapi]
-#[get("/<super_collection>/<parent>/<collection>")]
-pub async fn get_xyz(super_collection: &str, parent: Uuid, collection: &str) -> Json<Vec<Entity>> {
-    let _ = super_collection; // :) deal with it later
+#[get("/<parent_collection>/<parent>/<collection>")]
+pub async fn get_xyz(parent_collection: &str, parent: Uuid, collection: &str) -> Json<Vec<Entity>> {
+    let _ = parent_collection; // :) deal with it later
     let connection = &mut establish_connection().await;
 
     Json({
@@ -103,14 +103,14 @@ pub async fn post_x(collection: &str, body: Json<ReceivedEntity>) -> Json<PostRe
 }
 
 #[openapi]
-#[post("/<super_collection>/<parent>/<collection>", data = "<body>")]
+#[post("/<parent_collection>/<parent>/<collection>", data = "<body>")]
 pub async fn post_xyz(
-    super_collection: &str,
+    parent_collection: &str,
     parent: Uuid,
     collection: &str,
     body: Json<ReceivedEntity>,
 ) -> Json<PostResponse> {
-    let _ = super_collection; // :) deal with it later
+    let _ = parent_collection; // :) deal with it later
     let entity = Entity {
         id: body.id,
         parent_id: parent, // Yeet the provided parent out the window
